@@ -1,26 +1,26 @@
 steps:
-# Steps to pull a docker image for pgadmin, tag, and push it to Artifact Registry, then deploy it to Cloud Run.
+# Steps to pull a docker image for pgadmin, push it to container registry and deploy it to cloud run.
 - name: "gcr.io/cloud-builders/docker"
   args: ['pull', 'dpage/pgadmin4']
 - name: "gcr.io/cloud-builders/docker"
-  args: ['tag', 'dpage/pgadmin4', 'us-central1-docker.pkg.dev/chicago-business-intelligence/pgadmin/pgadmin']
+  args: ['tag', 'dpage/pgadmin4','gcr.io/chicago-business-intelligence/pgadmin']
 - name: "gcr.io/cloud-builders/docker"
-  args: ['push', 'us-central1-docker.pkg.dev/chicago-business-intelligence/pgadmin/pgadmin']
-# Deploy pgadmin to Cloud Run
+  args: ['push', 'gcr.io/chicago-business-intelligence/pgadmin']
+#deply pg-admin
 - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   entrypoint: gcloud
-  args: ['run', 'deploy', 'pg-admin', '--image', 'us-central1-docker.pkg.dev/chicago-business-intelligence/pgadmin/pgadmin', '--region', 'us-central1', '--add-cloudsql-instances', 'vibrant-victory-346914:us-central1:mypostgres', '--platform', 'managed', '--port', '80', '--allow-unauthenticated', '--set-env-vars', 'PGADMIN_DEFAULT_EMAIL=user@gmail.com', '--set-env-vars', 'PGADMIN_DEFAULT_PASSWORD=SuperSecret']
+  args: ['run', 'deploy','pg-admin', '--image','gcr.io/chicago-business-intelligence/pgadmin', '--region','us-central1', '--add-cloudsql-instances', 'vibrant-victory-346914:us-central1:mypostgres','--platform','managed', '--port','80', '--allow-unauthenticated','--set-env-vars','PGADMIN_DEFAULT_EMAIL=user@gmail.com','--set-env-vars','PGADMIN_DEFAULT_PASSWORD=SuperSecret']
   
-# Steps to build a docker image for go-microservice, push it to Artifact Registry and deploy it to Cloud Run.  
+# Steps to build a docker image for go-microservice, push it to container registry and deploy it to cloud run.  
 - name: "gcr.io/cloud-builders/docker"
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/chicago-business-intelligence/go-microservice/go-microservice', '.']
+  args: ['build', '-t', 'gcr.io/chicago-business-intelligence/go-microservice','.']
 - name: "gcr.io/cloud-builders/docker"
-  args: ['push', 'us-central1-docker.pkg.dev/chicago-business-intelligence/go-microservice/go-microservice']
+  args: ['push', 'gcr.io/chicago-business-intelligence/go-microservice']
   
 - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   entrypoint: gcloud
-  args: ['run', 'deploy', 'go-microservice', '--image', 'us-central1-docker.pkg.dev/chicago-business-intelligence/go-microservice/go-microservice', '--region', 'us-central1', '--add-cloudsql-instances', 'vibrant-victory-346914:us-central1:mypostgres', '--platform', 'managed', '--port', '8080', '--allow-unauthenticated']
-
+  args: ['run', 'deploy','go-microservice', '--image','gcr.io/chicago-business-intelligence/go-microservice', '--region','us-central1', '--add-cloudsql-instances', 'vibrant-victory-346914:us-central1:mypostgres','--platform','managed', '--port','8080', '--allow-unauthenticated']
 images:
-- us-central1-docker.pkg.dev/chicago-business-intelligence/go-microservice/go-microservice
-- us-central1-docker.pkg.dev/chicago-business-intelligence/pgadmin/pgadmin
+- gcr.io/chicago-business-intelligence/go-microservice
+- gcr.io/chicago-business-intelligence/pgadmin
+
