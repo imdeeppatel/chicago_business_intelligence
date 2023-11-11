@@ -23,4 +23,3 @@ steps:
 images:
 - gcr.io/atomic-airship-404501/go-microservice
 - gcr.io/atomic-airship-404501/pgadmin
-
