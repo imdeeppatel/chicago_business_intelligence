@@ -66,7 +66,6 @@ import (
 	"log"
 	"database/sql"
 	"encoding/json"
-
 	"github.com/kelvins/geocoder"
 	_ "github.com/lib/pq"
 )
@@ -186,7 +185,7 @@ func main() {
 	
 	//Option 4
 	//Database application running on Google Cloud Platform. 
-	db_connection := "user=postgres dbname=chicago_business_intelligence password=root host=/cloudsql/atomic-airship-404501:us-central1:mypostgres sslmode=disable port = 5432"
+	db_connection := "user=postgres dbname=chicago_business_intelligence password=root host=atomic-airship-404501:us-central1:mypostgres sslmode=disable port = 5432"
 	
 
 	db, err := sql.Open("postgres", db_connection)
@@ -198,14 +197,17 @@ func main() {
 	if port == "" {
         port = "8080"
 	}
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        w.Write([]byte("Hello, world!"))
+    })
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 
 	// Test the database connection
-	//err = db.Ping()
-	//if err != nil {
-	//	fmt.Println("Couldn't Connect to database")
-	//	panic(err)
-	//}
+	err = db.Ping()
+	if err != nil {
+		fmt.Println("Couldn't Connect to database")
+		panic(err)
+	}
 
 	// Spin in a loop and pull data from the city of chicago data portal
 	// Once every hour, day, week, etc.
