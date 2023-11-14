@@ -68,6 +68,7 @@ import (
 	"encoding/json"
 	"github.com/kelvins/geocoder"
 	_ "github.com/lib/pq"
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 )
 
 type TaxiTripsJsonRecords []struct {
@@ -185,13 +186,38 @@ func main() {
 	
 	//Option 4
 	//Database application running on Google Cloud Platform. 
-	db_connection := "user=postgres dbname=chicago_business_intelligence password=root host=/cloudsql/atomic-airship-404501:us-central1:mypostgres sslmode=disable port = 5432"
+	// db_connection := "user=postgres dbname=chicago_business_intelligence password=root host=/cloudsql/atomic-airship-404501:us-central1:mypostgres sslmode=disable port = 5432"
 	
 
-	db, err := sql.Open("postgres", db_connection)
+	// db, err := sql.Open("postgres", db_connection)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// Database connection settings
+	connectionName := "atomic-airship-404501:us-central1:mypostgres"
+	dbUser := "postgres"
+	dbPass := "root"
+	dbName := "chicago_business_intelligence"
+
+	dbURI := fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable",
+		connectionName, dbName, dbUser, dbPass)
+
+	// Initialize the SQL DB handle
+	log.Println("Initializing database connection")
+	db, err := sql.Open("cloudsqlpostgres", dbURI)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error on initializing database connection: %s", err.Error())
 	}
+	defer db.Close()
+
+	// Test the database connection
+	// log.Println("Testing database connection")
+	// err = db.Ping()
+	// if err != nil {
+	// 	log.Fatalf("Error on database connection: %s", err.Error())
+	// }
+	// log.Println("Database connection established")
 	
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -202,12 +228,6 @@ func main() {
     })
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 
-	// Test the database connection
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("Couldn't Connect to database")
-		panic(err)
-	}
 
 	// Spin in a loop and pull data from the city of chicago data portal
 	// Once every hour, day, week, etc.
