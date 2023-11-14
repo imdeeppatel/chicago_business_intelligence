@@ -233,6 +233,7 @@ func main() {
 	// Once every hour, day, week, etc.
 	// Though, please note that Not all datasets need to be pulled on daily basis
 	// fine-tune the following code-snippet as you see necessary
+	GetTaxiTrips(db)
 	for {
 		// build and fine-tune functions to pull data from different data sources
 		// This is a code snippet to show you how to pull data from different data sources//.
