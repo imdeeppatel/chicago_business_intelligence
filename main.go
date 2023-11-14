@@ -211,13 +211,13 @@ func main() {
 	}
 	defer db.Close()
 
-	// Test the database connection
-	// log.Println("Testing database connection")
-	// err = db.Ping()
-	// if err != nil {
-	// 	log.Fatalf("Error on database connection: %s", err.Error())
-	// }
-	// log.Println("Database connection established")
+	Test the database connection
+	log.Println("Testing database connection")
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("Error on database connection: %s", err.Error())
+	}
+	log.Println("Database connection established")
 	
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -234,15 +234,21 @@ func main() {
 	// Though, please note that Not all datasets need to be pulled on daily basis
 	// fine-tune the following code-snippet as you see necessary
 	for {
-		// build and fine-tune functions to pull data from different data sources
-		// This is a code snippet to show you how to pull data from different data sources//.
-		GetTaxiTrips(db)
-		GetUnemploymentRates(db)
-		GetBuildingPermits(db)
+		log.Println("Starting data retrieval cycle")
 
-		// Pull the data once a day
-		// You might need to pull Taxi Trips and COVID data on daily basis
-		// but not the unemployment dataset becasue its dataset doesn't change every day
+		if err := GetTaxiTrips(db); err != nil {
+			log.Printf("Error in GetTaxiTrips: %v", err)
+		}
+
+		if err := GetUnemploymentRates(db); err != nil {
+			log.Printf("Error in GetUnemploymentRates: %v", err)
+		}
+
+		if err := GetBuildingPermits(db); err != nil {
+			log.Printf("Error in GetBuildingPermits: %v", err)
+		}
+
+		log.Println("Completed data retrieval cycle, sleeping for 24 hours")
 		time.Sleep(24 * time.Hour)
 	}
 	
