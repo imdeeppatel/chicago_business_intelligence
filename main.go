@@ -219,28 +219,7 @@ func main() {
 	}
 	log.Println("Database connection established")
 
-	for {
-		// build and fine-tune functions to pull data from different data sources
-		// This is a code snippet to show you how to pull data from different data sources.
-		log.Println("Starting data retrieval cycle")
-	
-		if err := GetTaxiTrips(db); err != nil {
-			log.Printf("Error in GetTaxiTrips: %v", err)
-		}
-	
-		if err := GetUnemploymentRates(db); err != nil {
-			log.Printf("Error in GetUnemploymentRates: %v", err)
-		}
-	
-		if err := GetBuildingPermits(db); err != nil {
-			log.Printf("Error in GetBuildingPermits: %v", err)
-		}
-		// Pull the data once a day
-		// You might need to pull Taxi Trips and COVID data on daily basis
-		// but not the unemployment dataset becasue its dataset doesn't change every day
-		log.Println("Completed data retrieval cycle, sleeping for 24 hours")
-		time.Sleep(24 * time.Hour)
-	}
+	log.Println("Database query done!")
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -249,7 +228,10 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
         w.Write([]byte("Hello, world!"))
     })
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	go func() {
+		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	}()
+	
 
 
 	// Spin in a loop and pull data from the city of chicago data portal
@@ -257,19 +239,19 @@ func main() {
 	// Though, please note that Not all datasets need to be pulled on daily basis
 	// fine-tune the following code-snippet as you see necessary
 	
-	// for {
-	// 	// build and fine-tune functions to pull data from different data sources
-	// 	// This is a code snippet to show you how to pull data from different data sources//.
-	// 	log.Println("Inside For")
-	// 	GetTaxiTrips(db)
-	// 	GetUnemploymentRates(db)
-	// 	GetBuildingPermits(db)
+	for {
+		// build and fine-tune functions to pull data from different data sources
+		// This is a code snippet to show you how to pull data from different data sources//.
+		log.Println("Inside For")
+		GetTaxiTrips(db)
+		GetUnemploymentRates(db)
+		GetBuildingPermits(db)
 
-	// 	// Pull the data once a day
-	// 	// You might need to pull Taxi Trips and COVID data on daily basis
-	// 	// but not the unemployment dataset becasue its dataset doesn't change every day
-	// 	time.Sleep(24 * time.Hour)
-	// }
+		// Pull the data once a day
+		// You might need to pull Taxi Trips and COVID data on daily basis
+		// but not the unemployment dataset becasue its dataset doesn't change every day
+		time.Sleep(24 * time.Hour)
+	}
 
 	
 	
