@@ -277,7 +277,6 @@ func GetTaxiTrips(db *sql.DB) error {
 	// 2. https://data.cityofchicago.org/Transportation/Transportation-Network-Providers-Trips/m6dm-c72p
 
 
-	log.Println("Inside Taxitrips")
 	fmt.Println("GetTaxiTrips: Collecting Taxi Trips Data")
 
 	// Get your geocoder.ApiKey from here :
