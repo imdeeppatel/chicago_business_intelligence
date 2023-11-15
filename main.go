@@ -219,26 +219,28 @@ func main() {
 	}
 	log.Println("Database connection established")
 
-	create_table := `CREATE TABLE IF NOT EXISTS "taxi_trips" (
-		"id"   SERIAL , 
-		"trip_id" VARCHAR(255) UNIQUE, 
-		"trip_start_timestamp" TIMESTAMP WITH TIME ZONE, 
-		"trip_end_timestamp" TIMESTAMP WITH TIME ZONE, 
-		"pickup_centroid_latitude" DOUBLE PRECISION, 
-		"pickup_centroid_longitude" DOUBLE PRECISION, 
-		"dropoff_centroid_latitude" DOUBLE PRECISION, 
-		"dropoff_centroid_longitude" DOUBLE PRECISION, 
-		"pickup_zip_code" VARCHAR(255), 
-		"dropoff_zip_code" VARCHAR(255), 
-		PRIMARY KEY ("id") 
-	);`
-
-	_, _err := db.Exec(create_table)
-	if _err != nil {
-	panic(_err)
+	for {
+		// build and fine-tune functions to pull data from different data sources
+		// This is a code snippet to show you how to pull data from different data sources.
+		log.Println("Starting data retrieval cycle")
+	
+		if err := GetTaxiTrips(db); err != nil {
+			log.Printf("Error in GetTaxiTrips: %v", err)
+		}
+	
+		if err := GetUnemploymentRates(db); err != nil {
+			log.Printf("Error in GetUnemploymentRates: %v", err)
+		}
+	
+		if err := GetBuildingPermits(db); err != nil {
+			log.Printf("Error in GetBuildingPermits: %v", err)
+		}
+		// Pull the data once a day
+		// You might need to pull Taxi Trips and COVID data on daily basis
+		// but not the unemployment dataset becasue its dataset doesn't change every day
+		log.Println("Completed data retrieval cycle, sleeping for 24 hours")
+		time.Sleep(24 * time.Hour)
 	}
-
-	log.Println("Database query done!")
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -269,24 +271,7 @@ func main() {
 	// 	time.Sleep(24 * time.Hour)
 	// }
 
-	for {
-		log.Println("Starting data retrieval cycle")
 	
-		if err := GetTaxiTrips(db); err != nil {
-			log.Printf("Error in GetTaxiTrips: %v", err)
-		}
-	
-		if err := GetUnemploymentRates(db); err != nil {
-			log.Printf("Error in GetUnemploymentRates: %v", err)
-		}
-	
-		if err := GetBuildingPermits(db); err != nil {
-			log.Printf("Error in GetBuildingPermits: %v", err)
-		}
-	
-		log.Println("Completed data retrieval cycle, sleeping for 24 hours")
-		time.Sleep(24 * time.Hour)
-	}
 	
 
 }
