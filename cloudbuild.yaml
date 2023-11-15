@@ -5,7 +5,7 @@ steps:
 - name: "gcr.io/cloud-builders/docker"
   args: ['tag', 'dpage/pgadmin4','atomic-airship-404501/pgadmin']
 - name: "gcr.io/cloud-builders/docker"
-  args: ['push', 'atomic-airship-404501']
+  args: ['push', 'atomic-airship-404501/pgadmin']
 #deply pg-admin
 - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
   entrypoint: gcloud

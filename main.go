@@ -195,7 +195,7 @@ func main() {
 	// }
 
 	// Database connection settings
-	connectionName := "Connection-Name"
+	connectionName := "atomic-airship-404501:us-central1:mypostgres"
 	dbUser := "postgres"
 	dbPass := "root"
 	dbName := "chicago_business_intelligence"
