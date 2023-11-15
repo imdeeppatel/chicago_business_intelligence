@@ -233,17 +233,37 @@ func main() {
 	// Once every hour, day, week, etc.
 	// Though, please note that Not all datasets need to be pulled on daily basis
 	// fine-tune the following code-snippet as you see necessary
-	GetTaxiTrips(db)
-	for {
-		// build and fine-tune functions to pull data from different data sources
-		// This is a code snippet to show you how to pull data from different data sources//.
-		GetTaxiTrips(db)
-		GetUnemploymentRates(db)
-		GetBuildingPermits(db)
+	
+	// for {
+	// 	// build and fine-tune functions to pull data from different data sources
+	// 	// This is a code snippet to show you how to pull data from different data sources//.
+	// 	log.Println("Inside For")
+	// 	GetTaxiTrips(db)
+	// 	GetUnemploymentRates(db)
+	// 	GetBuildingPermits(db)
 
-		// Pull the data once a day
-		// You might need to pull Taxi Trips and COVID data on daily basis
-		// but not the unemployment dataset becasue its dataset doesn't change every day
+	// 	// Pull the data once a day
+	// 	// You might need to pull Taxi Trips and COVID data on daily basis
+	// 	// but not the unemployment dataset becasue its dataset doesn't change every day
+	// 	time.Sleep(24 * time.Hour)
+	// }
+
+	for {
+		log.Println("Starting data retrieval cycle")
+	
+		if err := GetTaxiTrips(db); err != nil {
+			log.Printf("Error in GetTaxiTrips: %v", err)
+		}
+	
+		if err := GetUnemploymentRates(db); err != nil {
+			log.Printf("Error in GetUnemploymentRates: %v", err)
+		}
+	
+		if err := GetBuildingPermits(db); err != nil {
+			log.Printf("Error in GetBuildingPermits: %v", err)
+		}
+	
+		log.Println("Completed data retrieval cycle, sleeping for 24 hours")
 		time.Sleep(24 * time.Hour)
 	}
 	
@@ -257,7 +277,7 @@ func main() {
 /////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////
 
-func GetTaxiTrips(db *sql.DB) {
+func GetTaxiTrips(db *sql.DB) error {
 
 
 	// This function is NOT complete
@@ -269,7 +289,7 @@ func GetTaxiTrips(db *sql.DB) {
 	// 2. https://data.cityofchicago.org/Transportation/Transportation-Network-Providers-Trips/m6dm-c72p
 
 
-
+	log.Println("Inside Taxitrips")
 	fmt.Println("GetTaxiTrips: Collecting Taxi Trips Data")
 
 	// Get your geocoder.ApiKey from here :
@@ -433,6 +453,8 @@ func GetTaxiTrips(db *sql.DB) {
 
 	}
 
+	return nil
+
 }
 
 
@@ -440,7 +462,7 @@ func GetTaxiTrips(db *sql.DB) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func GetUnemploymentRates(db *sql.DB) {
+func GetUnemploymentRates(db *sql.DB) error {
 	fmt.Println("GetUnemploymentRates: Collecting Unemployment Rates Data")
 	
 	// This function is NOT complete
@@ -767,7 +789,7 @@ func GetUnemploymentRates(db *sql.DB) {
 		}
 
 	}
-
+	return nil
 }
 
 
@@ -776,7 +798,7 @@ func GetUnemploymentRates(db *sql.DB) {
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
 
-func GetBuildingPermits(db *sql.DB) {
+func GetBuildingPermits(db *sql.DB) error {
 	fmt.Println("GetBuildingPermits: Collecting Building Permits Data")
 	
 	
@@ -1143,4 +1165,6 @@ func GetBuildingPermits(db *sql.DB) {
 		}
 
 	}
+
+	return nil
 }
